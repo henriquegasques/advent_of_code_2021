@@ -19,25 +19,57 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
-	var inputLines []string
+	var depthScans []int
 	for scanner.Scan() {
-		inputLines = append(inputLines, scanner.Text())
+		depth, _ := strconv.Atoi(scanner.Text())
+		depthScans = append(depthScans, depth)
 	}
 
+	partOne(depthScans)
+	partTwo(depthScans)
+}
+
+func partOne(depthScans []int) {
 	var previousDepth int
-	numberOfDepthIncreases := 0
-	for _, line := range inputLines {
-		depth, err := strconv.Atoi(line)
-
-		if err != nil {
-			panic(err)
-		}
-
+	var numberOfDepthIncreases int
+	for _, depth := range depthScans {
 		if depth > previousDepth {
 			numberOfDepthIncreases++
 		}
 
 		previousDepth = depth
+	}
+
+	fmt.Println(numberOfDepthIncreases)
+}
+
+func partTwo(depthScans []int) {
+	var measurementWindows [][]int
+	windowSize := 3
+
+	for i := 0; i < len(depthScans); i++ {
+		windowEnd := i + windowSize
+
+		if windowEnd > len(depthScans) {
+			break
+		}
+
+		measurementWindows = append(measurementWindows, depthScans[i:windowEnd])
+	}
+
+	var previousWindowDepth int
+	var numberOfDepthIncreases int
+	for _, window := range measurementWindows {
+		var windowDepth int
+		for _, depth := range window {
+			windowDepth += depth
+		}
+
+		if windowDepth > previousWindowDepth {
+			numberOfDepthIncreases++
+		}
+
+		previousWindowDepth = windowDepth
 	}
 
 	fmt.Println(numberOfDepthIncreases)
